@@ -3,146 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plastic Tap Factory Hub | Admin</title>
-    
+    <title>Krishi Tap Factory | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 
     <style>
-        :root {
-            --primary: #00f2ff;
-            --bg: #050a14;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text: #ffffff;
-        }
-
+        :root { --primary: #00f2ff; --bg: #030811; --glass: rgba(255, 255, 255, 0.05); --success: #00ff88; --danger: #ff4b2b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; }
-
-        /* Login */
-        #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #0a192f, #050a14);
-            display: flex; align-items: center; justify-content: center; z-index: 2000;
-        }
-
-        /* Glass Cards */
-        .glass-card {
-            background: var(--glass); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 20px;
-            padding: 25px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Dashboard & Navigation */
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; display: none; }
-        .nav-tabs { display: flex; gap: 15px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap; }
-        .tab-btn {
-            background: var(--glass); border: 1px solid var(--primary); color: white;
-            padding: 12px 25px; border-radius: 30px; cursor: pointer; font-family: 'Orbitron';
-        }
-        .tab-btn.active { background: var(--primary); color: #000; font-weight: bold; }
-
+        body { background: var(--bg); color: #fff; padding: 10px; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        .nav-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .nav-btn { flex: 1; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); color: #aaa; padding: 12px; border-radius: 10px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.65rem; }
+        .nav-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 242, 255, 0.1); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: left; }
+        th { color: var(--primary); font-family: 'Orbitron'; font-size: 0.7rem; }
+        input, select { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: #fff; border-radius: 8px; margin-top: 8px; }
+        .btn-pay { background: var(--success); color: #000; padding: 8px 12px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-size: 0.8rem; }
+        .btn-done { background: var(--primary); color: #000; padding: 8px; border-radius: 6px; border: none; cursor: pointer; margin-left: 5px; }
+        .btn-del { background: none; border: 1px solid var(--danger); color: var(--danger); padding: 5px 10px; border-radius: 6px; cursor: pointer; }
         .section { display: none; }
-        .section.active { display: block; animation: fadeIn 0.5s; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Forms */
-        input, select {
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.4);
-            border: 1px solid var(--glass-border); border-radius: 10px; color: white; margin-bottom: 15px;
-        }
-        label { display: block; margin-bottom: 5px; color: var(--primary); font-size: 0.8rem; }
-
-        button.action-btn {
-            width: 100%; padding: 12px; background: linear-gradient(45deg, var(--primary), #0072ff);
-            border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer;
-        }
-
-        /* Attendance Buttons */
-        .att-btns { display: flex; gap: 10px; margin-top: 10px; }
-        .btn-p { background: #00ff88 !important; color: black !important; }
-        .btn-a { background: #ff4b2b !important; color: white !important; }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { text-align: left; padding: 15px; border-bottom: 1px solid var(--glass-border); }
-        th { color: var(--primary); font-family: 'Orbitron'; font-size: 0.8rem; }
-
-        .shift-badge { padding: 3px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: bold; }
-        .day { background: #ff9800; color: #000; }
-        .night { background: #3f51b5; color: #fff; }
+        .section.active { display: block; }
+        #loginOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
 <div id="loginOverlay">
-    <div class="glass-card" style="width: 350px;">
-        <h2 style="text-align: center; color: var(--primary); font-family: 'Orbitron'; margin-bottom: 20px;">ADMIN LOGIN</h2>
+    <div class="glass-card" style="width: 300px;">
+        <h2 style="text-align: center; font-family: 'Orbitron'; color: var(--primary); margin-bottom: 15px;">ADMIN</h2>
         <input type="email" id="loginEmail" placeholder="Email">
         <input type="password" id="loginPass" placeholder="Password">
-        <button class="action-btn" onclick="login()">Enter System</button>
+        <button onclick="login()" style="width:100%; margin-top:15px; padding:12px; background:var(--primary); border:none; cursor:pointer; font-weight:bold; border-radius:8px;">ENTER</button>
     </div>
 </div>
 
-<div class="container" id="mainSystem">
-    <header style="text-align: center; margin-bottom: 30px;">
-        <h1 style="font-family: 'Orbitron'; color: var(--primary);">FACTORY HUB</h1>
-        <button onclick="logout()" style="background:none; border:none; color:red; cursor:pointer;">[ Logout ]</button>
-    </header>
-
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="showSection('register')">Registration</button>
-        <button class="tab-btn" onclick="showSection('attendance')">Daily Attendance</button>
-        <button class="tab-btn" onclick="showSection('salary')">Salary Report</button>
+<div id="mainSystem" style="display:none;">
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="tab('attendance')">ATTENDANCE</button>
+        <button class="nav-btn" onclick="tab('workers')">WORKERS</button>
+        <button class="nav-btn" onclick="tab('salary')">PAYOUTS</button>
     </div>
 
-    <div id="register" class="section active">
-        <div class="glass-card" style="max-width: 600px; margin: 0 auto;">
-            <h2>Worker Details</h2>
+    <div id="workers" class="section">
+        <div class="glass-card">
+            <h3 style="font-family:'Orbitron'; font-size: 1rem; color: var(--primary);">Add Worker</h3>
             <input type="text" id="wName" placeholder="Worker Name">
-            <input type="text" id="wMobile" placeholder="Mobile Number">
-            <input type="text" id="wUpi" placeholder="UPI ID (optional)">
-            <label>Shift Type</label>
-            <select id="wShift">
-                <option value="Day">Day Shift (☀️)</option>
-                <option value="Night">Night Shift (🌙)</option>
-            </select>
-            <label>8-Hour Basic Salary (₹)</label>
-            <input type="number" id="wBaseSalary" placeholder="Example: 400">
-            <button class="action-btn" onclick="addWorker()">Save Worker Profile</button>
+            <input type="number" id="wBase" placeholder="8-Hour Salary (₹)">
+            <input type="text" id="wUpi" placeholder="UPI ID (e.g. 9876543210@okaxis)">
+            <select id="wShift"><option>Day Shift</option><option>Night Shift</option></select>
+            <button onclick="saveWorker()" style="width:100%; margin-top:15px; background:var(--primary); padding:12px; border-radius:8px; border:none; font-weight:bold;">SAVE TO DATABASE</button>
+        </div>
+        <div class="glass-card">
+            <h3 style="font-family:'Orbitron'; margin-bottom:10px;">Worker List</h3>
+            <div style="overflow-x:auto;">
+                <table id="workerTable">
+                    <thead><tr><th>Name</th><th>Shift</th><th>Action</th></tr></thead>
+                    <tbody id="workerListBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div id="attendance" class="section">
-        <div class="glass-card">
-            <h2>Mark Attendance (Today)</h2>
-            <div id="attendanceList">
-                <p style="opacity:0.5">Loading workers...</p>
-            </div>
+    <div id="attendance" class="section active">
+        <div class="glass-card" style="overflow-x:auto;">
+            <h3 style="font-family:'Orbitron'; margin-bottom:10px;">Weekly Hours</h3>
+            <table>
+                <thead><tr><th>Name</th><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr></thead>
+                <tbody id="attendanceGrid"></tbody>
+            </table>
         </div>
     </div>
 
     <div id="salary" class="section">
         <div class="glass-card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h2>Weekly Payout (Sat)</h2>
-                <input type="text" id="searchBox" onkeyup="filterSalary()" placeholder="Search Name..." style="width:200px; margin-bottom:0;">
-            </div>
-            <div style="overflow-x: auto;">
-                <table id="salaryTable">
-                    <thead>
-                        <tr>
-                            <th>Worker</th>
-                            <th>Shift</th>
-                            <th>Total Hrs</th>
-                            <th>8hr Base</th>
-                            <th>Net Payout</th>
-                        </tr>
-                    </thead>
+            <h3 style="font-family:'Orbitron'; margin-bottom:15px;">Pending Payments</h3>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead><tr><th>Worker</th><th>Hrs</th><th>Amount</th><th>Pay Action</th></tr></thead>
                     <tbody id="salaryBody"></tbody>
                 </table>
             </div>
@@ -164,138 +104,143 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
-    // UI Navigation
-    function showSection(id) {
+    function tab(id) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        event.target.classList.add('active');
-        if(id === 'attendance') loadAttendanceList();
-        if(id === 'salary') loadSalaryReport();
+        event.currentTarget.classList.add('active');
+        if(id === 'workers') loadWorkers();
+        if(id === 'attendance') loadAttendance();
+        if(id === 'salary') loadSalary();
     }
 
-    // Auth
     function login() {
         const e = document.getElementById('loginEmail').value;
         const p = document.getElementById('loginPass').value;
-        auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+        auth.signInWithEmailAndPassword(e, p).catch(err => alert("Login Error: " + err.message));
     }
-    function logout() { auth.signOut(); }
 
     auth.onAuthStateChanged(user => {
         if(user) {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('mainSystem').style.display = 'block';
-        } else {
-            document.getElementById('loginOverlay').style.display = 'flex';
-            document.getElementById('mainSystem').style.display = 'none';
+            loadAttendance();
         }
     });
 
-    // 1. Worker Add
-    async function addWorker() {
-        const worker = {
-            name: document.getElementById('wName').value,
-            mobile: document.getElementById('wMobile').value,
-            upi: document.getElementById('wUpi').value,
-            shift: document.getElementById('wShift').value,
-            baseSalary8hr: parseFloat(document.getElementById('wBaseSalary').value),
-            hourlyRate: parseFloat(document.getElementById('wBaseSalary').value) / 8
-        };
-        await db.collection("workers").add(worker);
-        alert("Worker Saved!");
-        location.reload();
+    // --- WORKER LOGIC ---
+    async function saveWorker() {
+        const name = document.getElementById('wName').value;
+        const base = document.getElementById('wBase').value;
+        const upi = document.getElementById('wUpi').value;
+        const shift = document.getElementById('wShift').value;
+        if(!name || !base || !upi) return alert("Fill all fields including UPI");
+        await db.collection("workers").add({ name, baseSalary: parseFloat(base), upi, shift });
+        alert("Worker Added Successfully");
+        tab('workers');
     }
 
-    // 2. Attendance List
-    async function loadAttendanceList() {
-        const list = document.getElementById('attendanceList');
-        list.innerHTML = "";
+    async function loadWorkers() {
         const snap = await db.collection("workers").get();
+        const body = document.getElementById('workerListBody');
+        body.innerHTML = "";
         snap.forEach(doc => {
             const w = doc.data();
-            const div = document.createElement('div');
-            div.className = "glass-card";
-            div.style.marginBottom = "10px";
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <strong>${w.name}</strong> 
-                        <span class="shift-badge ${w.shift.toLowerCase()}">${w.shift}</span>
-                    </div>
-                    <div class="att-btns">
-                        <button class="tab-btn btn-p" onclick="mark('${doc.id}', 11.5)">P (11.5h)</button>
-                        <button class="tab-btn btn-a" onclick="mark('${doc.id}', 0)">A (0h)</button>
-                    </div>
-                </div>
-            `;
-            list.appendChild(div);
+            body.innerHTML += `<tr>
+                <td><b>${w.name}</b></td>
+                <td>${w.shift}</td>
+                <td><button class="btn-del" onclick="deleteWorker('${doc.id}')">Delete</button></td>
+            </tr>`;
         });
     }
 
-    async function mark(id, hrs) {
-        await db.collection("attendance").add({
-            workerId: id,
-            hours: hrs,
-            date: new Date().toDateString(),
-            timestamp: new Date()
-        });
-        alert("Marked: " + hrs + " hrs");
+    async function deleteWorker(id) {
+        if(confirm("Confirm Delete Worker?")) {
+            await db.collection("workers").doc(id).delete();
+            loadWorkers();
+        }
     }
 
-    // 3. Salary Report
-    let reportCache = [];
-    async function loadSalaryReport() {
-        const body = document.getElementById('salaryBody');
-        body.innerHTML = "<tr><td colspan='5'>Calculating...</td></tr>";
-        
+    // --- ATTENDANCE LOGIC ---
+    async function loadAttendance() {
         const wSnap = await db.collection("workers").get();
-        const start = new Date(); start.setDate(start.getDate() - 7);
-        const aSnap = await db.collection("attendance").where("timestamp", ">=", start).get();
+        const grid = document.getElementById('attendanceGrid');
+        grid.innerHTML = "";
+        wSnap.forEach(doc => {
+            const w = doc.data();
+            let inputs = "";
+            for(let i=0; i<7; i++) {
+                inputs += `<td><input type="number" id="h-${doc.id}-${i}" placeholder="0" style="width:45px; padding:5px; margin:0;" onchange="saveHrs('${doc.id}')"></td>`;
+            }
+            grid.innerHTML += `<tr><td>${w.name}</td>${inputs}</tr>`;
+            loadSavedHrs(doc.id);
+        });
+    }
+
+    async function saveHrs(workerId) {
+        let hrs = [];
+        for(let i=0; i<7; i++) hrs.push(document.getElementById(`h-${workerId}-${i}`).value || 0);
+        await db.collection("weekly_att").doc(workerId).set({ hours: hrs });
+    }
+
+    async function loadSavedHrs(workerId) {
+        const doc = await db.collection("weekly_att").doc(workerId).get();
+        if(doc.exists) {
+            doc.data().hours.forEach((h, i) => {
+                const el = document.getElementById(`h-${workerId}-${i}`);
+                if(el) el.value = h;
+            });
+        }
+    }
+
+    // --- SALARY & UPI PAY LOGIC ---
+    async function loadSalary() {
+        const wSnap = await db.collection("workers").get();
+        const aSnap = await db.collection("weekly_att").get();
+        const pSnap = await db.collection("payments").get();
         
-        let attData = []; aSnap.forEach(d => attData.push(d.data()));
+        let attMap = {}; aSnap.forEach(d => attMap[d.id] = d.data().hours);
+        let paidMap = {}; pSnap.forEach(d => paidMap[d.id] = true);
         
+        const body = document.getElementById('salaryBody');
         body.innerHTML = "";
-        reportCache = [];
 
         wSnap.forEach(doc => {
             const w = doc.data();
-            let totalHrs = 0;
-            attData.forEach(r => { if(r.workerId === doc.id) totalHrs += r.hours; });
+            const hrs = attMap[doc.id] || [0,0,0,0,0,0,0];
+            const totalHrs = hrs.reduce((a, b) => parseFloat(a) + parseFloat(b), 0);
+            const amount = (totalHrs * (parseFloat(w.baseSalary || 0) / 8)).toFixed(2);
             
-            // Salary Logic: Total Hrs * (8hr_Salary / 8)
-            let payout = totalHrs * (w.baseSalary8hr / 8);
+            // UPI Link Structure with Remark
+            const remark = encodeURIComponent("KRISHI TAP SALARY");
+            const upiLink = `upi://pay?pa=${w.upi}&pn=${encodeURIComponent(w.name)}&am=${amount}&cu=INR&tn=${remark}`;
             
-            const row = {
-                name: w.name,
-                shift: w.shift,
-                hrs: totalHrs,
-                base: w.baseSalary8hr,
-                pay: payout.toFixed(2)
-            };
-            reportCache.push(row);
-            displayRow(row);
+            let actionHtml = "";
+            if(paidMap[doc.id]) {
+                actionHtml = `<span style="color:var(--success); font-weight:bold;">● PAID</span>`;
+            } else {
+                actionHtml = `
+                    <div style="display:flex; align-items:center;">
+                        <a href="${upiLink}" class="btn-pay" target="_blank">PAY</a>
+                        <button class="btn-done" title="Mark as Paid" onclick="markPaid('${doc.id}')">✓</button>
+                    </div>
+                `;
+            }
+
+            body.innerHTML += `<tr>
+                <td><b>${w.name}</b></td>
+                <td>${totalHrs}h</td>
+                <td>₹${amount}</td>
+                <td>${actionHtml}</td>
+            </tr>`;
         });
     }
 
-    function displayRow(r) {
-        const body = document.getElementById('salaryBody');
-        body.innerHTML += `
-            <tr>
-                <td>${r.name}</td>
-                <td><span class="shift-badge ${r.shift.toLowerCase()}">${r.shift}</span></td>
-                <td>${r.hrs} hrs</td>
-                <td>₹${r.base}</td>
-                <td style="color:var(--primary); font-weight:bold;">₹${r.pay}</td>
-            </tr>
-        `;
-    }
-
-    function filterSalary() {
-        const q = document.getElementById('searchBox').value.toLowerCase();
-        const body = document.getElementById('salaryBody');
-        body.innerHTML = "";
-        reportCache.filter(r => r.name.toLowerCase().includes(q)).forEach(displayRow);
+    async function markPaid(id) {
+        if(confirm("Mark this worker as PAID for this week?")) {
+            await db.collection("payments").doc(id).set({ paid: true, timestamp: new Date() });
+            loadSalary();
+        }
     }
 </script>
 </body>
